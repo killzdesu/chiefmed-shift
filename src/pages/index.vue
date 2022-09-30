@@ -1,10 +1,41 @@
 <script setup lang="ts">
+import axios from 'axios'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import timezone from 'dayjs/plugin/timezone'
+import { Ref } from 'vue'
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const isLoading = ref(false)
+const r3shift: Ref<any> = ref([[]])
 
 const fetchData = async () => {
-  await new Promise(r => setTimeout(r, 2000));
+  // Sleep
+  // await new Promise(r => setTimeout(r, 2000));
+
+  const sheetId = import.meta.env.VITE_SHEET_R3
+  const sheetRange = import.meta.env.VITE_RANGE_R3
+  const apiKey = import.meta.env.VITE_API_KEY
+  let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetRange}`
+
+  // r3shift.value = [['','error','error','error']]
+  try {
+    const res = await axios.get(url, {
+      params: {
+        key: apiKey
+      }
+    })
+    console.log(res.data.values)
+    r3shift.value = res.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
+  } catch (err) {
+    console.error(err)
+    r3shift.value = [['','error','error','error']]
+  }
 }
+
+let today = dayjs().tz("Asia/Bangkok")
+if (today.hour() < 8) today = today.subtract(1, 'd')
 
 onMounted(async () => {
   isLoading.value = true
@@ -17,12 +48,28 @@ onMounted(async () => {
 <template>
   <div>
     <!-- <div i-carbon-campsite text-4xl inline-block /> -->
-    <h2 text-xl font-bold>
+    <h2 text-3xl font-bold>
+      <div i-carbon-reminder-medical text-2xl inline-block></div>
       Chief Med
     </h2>
-    <p text-lg> Today </p>
+    <p text-lg p-4> {{ today.format('dddd DD/MM/YYYY') }} </p>
+    <hr/>
     <div v-if="!isLoading">
-      Loaded
+      <div p-3>
+        <h2 text-lg font-bold>เวรบน</h2>
+        <span>{{ r3shift[0][1] }}</span>
+      </div>
+      <hr/>
+      <div p-3>
+        <h2 text-lg font-bold>เวรกลาง</h2>
+        <span>{{ r3shift[0][2] }}</span>
+      </div>
+      <hr/>
+      <div p-3>
+        <h2 text-lg font-bold>เวรล่าง</h2>
+        <span>{{ r3shift[0][3] }}</span>
+      </div>
+      
     </div>
     <div v-if="isLoading">Loading...</div>
 
