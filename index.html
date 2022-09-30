@@ -7,14 +7,14 @@
   <title>Chief Med</title>
   <meta name="description" content="Chief MED">
 </head>
-<body class="font-sans dark:text-white dark:bg-hex-121212">
+<body class="font-sans">
   <div id="app"></div>
   <script>
     (function() {
-      const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
-      const setting = localStorage.getItem('color-schema') || 'auto'
-      if (setting === 'dark' || (prefersDark && setting !== 'light'))
-        document.documentElement.classList.toggle('dark', true)
+      // const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+      // const setting = localStorage.getItem('color-schema') || 'auto'
+      // if (setting === 'dark' || (prefersDark && setting !== 'light'))
+      //   document.documentElement.classList.toggle('dark', true)
     })()
   </script>
   <script type="module" src="/src/main.ts"></script>
