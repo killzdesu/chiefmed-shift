@@ -14,12 +14,30 @@ const fetchData = async () => {
   // Sleep
   // await new Promise(r => setTimeout(r, 2000));
 
-  const sheetId = import.meta.env.VITE_SHEET_R3
-  const sheetRange = import.meta.env.VITE_RANGE_R3
+  // const sheetId = import.meta.env.VITE_SHEET_R3
+  // const sheetRange = import.meta.env.VITE_RANGE_R3
+
+  let sheetId = ''
+  let sheetRange = ''
+  const medconfigUrl = 'https://gcp.limzz.xyz/med-config/get-config-all?table=chiefmed'
+
+  // Get Chief med config from med-config-backend
+  try {
+    const confRes = (await axios.get(medconfigUrl)).data
+    sheetId = confRes[0].value.split('spreadsheets/')[1].split('/')[1]
+    sheetRange = confRes[1].value
+  } catch (err) {
+    console.error(err)
+  }
+
+  if (sheetId === '') {
+    sheetId = import.meta.env.VITE_SHEET_R3
+    sheetRange = import.meta.env.VITE_RANGE_R3
+  }
+
   const apiKey = import.meta.env.VITE_API_KEY
   let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetRange}`
 
-  // r3shift.value = [['','error','error','error']]
   try {
     const res = await axios.get(url, {
       params: {
