@@ -37,15 +37,30 @@ const fetchData = async () => {
 
   const apiKey = import.meta.env.VITE_API_KEY
   let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetRange}`
+  let urlMain = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:E50`
 
   try {
-    const res = await axios.get(url, {
+    const res = await axios.get(urlMain, {
       params: {
         key: apiKey
       }
     })
-    console.log(res.data.values)
-    r3shift.value = res.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
+    // console.log(res.data.values)
+    r3shift.value = res.data.values.filter((e:any) => e[0]==today.add(543, 'y').format('D/M/YY'))
+    if (r3shift.value.length == 0) {
+      r3shift.value = res.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
+    }
+    if (r3shift.value.length == 0) {
+      const res2 = await axios.get(url, {
+        params: {
+          key: apiKey
+        }
+      })
+      r3shift.value = res2.data.values.filter((e:any) => e[0]==today.add(543, 'y').format('D/M/YY'))
+      if (r3shift.value.length == 0) {
+        r3shift.value = res2.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
+      }
+    }
   } catch (err) {
     console.error(err)
     r3shift.value = [['','error','error','error']]
@@ -65,7 +80,6 @@ onMounted(async () => {
 
 <template>
   <div>
-    <!-- <div i-carbon-campsite text-4xl inline-block /> -->
     <h2 text-3xl font-bold>
       <div i-carbon-reminder-medical text-2xl inline-block></div>
       Chief Med
