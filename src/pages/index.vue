@@ -19,7 +19,8 @@ const fetchData = async () => {
 
   let sheetId = ''
   let sheetRange = ''
-  const medconfigUrl = 'https://gcp.limzz.xyz/med-config/get-config-all?table=chiefmed'
+  // const medconfigUrl = 'https://gcp.limzz.xyz/med-config/get-config-all?table=chiefmed'
+  const medconfigUrl = 'http://35.199.151.231/med-config/get-config-all?table=chiefmed'
 
   // Get Chief med config from med-config-backend
   try {
