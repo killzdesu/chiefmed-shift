@@ -19,7 +19,6 @@ const fetchData = async () => {
 
   let sheetId = ''
   let sheetRange = ''
-  // const medconfigUrl = 'https://gcp.limzz.xyz/med-config/get-config-all?table=chiefmed'
   const medconfigUrl = 'https://gcp.limzz.press/med-config/get-config-all?table=chiefmed'
 
   // Get Chief med config from med-config-backend
@@ -36,9 +35,12 @@ const fetchData = async () => {
     sheetRange = import.meta.env.VITE_RANGE_R3
   }
 
+  // Change spreadsheets to pool of R1-2-3
+  sheetId = "10zzJDlUcWmXodx48tLFONtud20Bv5yYhofiTT6XVMdQ"
+
   const apiKey = import.meta.env.VITE_API_KEY
   let url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${sheetRange}`
-  let urlMain = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/A1:E50`
+  let urlMain = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Code`
 
   try {
     const res = await axios.get(urlMain, {
@@ -46,22 +48,9 @@ const fetchData = async () => {
         key: apiKey
       }
     })
-    // console.log(res.data.values)
-    r3shift.value = res.data.values.filter((e:any) => e[0]==today.add(543, 'y').format('D/M/YY'))
-    if (r3shift.value.length == 0) {
-      r3shift.value = res.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
-    }
-    if (r3shift.value.length == 0) {
-      const res2 = await axios.get(url, {
-        params: {
-          key: apiKey
-        }
-      })
-      r3shift.value = res2.data.values.filter((e:any) => e[0]==today.add(543, 'y').format('D/M/YY'))
-      if (r3shift.value.length == 0) {
-        r3shift.value = res2.data.values.filter((e:any) => e[0]==today.format('M/D/YY'))
-      }
-    }
+    // console.log(res.data.values.slice(-30))
+    const TodayString = today.format("DD/MM/YYYY")
+    r3shift.value = res.data.values.filter((e:any) => (e[0] == TodayString))
   } catch (err) {
     console.error(err)
     r3shift.value = [['','error','error','error']]
@@ -90,17 +79,17 @@ onMounted(async () => {
     <div v-if="!isLoading">
       <div p-3>
         <h2 text-lg font-bold>เวรบน</h2>
-        <span>{{ r3shift[0][1] }}</span>
+        <span>{{ r3shift[0][12] }}</span>
       </div>
       <hr/>
       <div p-3>
         <h2 text-lg font-bold>เวรกลาง</h2>
-        <span>{{ r3shift[0][2] }}</span>
+        <span>{{ r3shift[0][13] }}</span>
       </div>
       <hr/>
       <div p-3>
         <h2 text-lg font-bold>เวรล่าง</h2>
-        <span>{{ r3shift[0][3] }}</span>
+        <span>{{ r3shift[0][14] }}</span>
       </div>
       
     </div>
